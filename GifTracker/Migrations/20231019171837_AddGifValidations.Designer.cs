@@ -2,6 +2,7 @@
 using GifTrackerAPI.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GifTrackerAPI.Migrations
 {
     [DbContext(typeof(GifTrackerApiContext))]
-    partial class GifTrackerApiContextModelSnapshot : ModelSnapshot
+    [Migration("20231019171837_AddGifValidations")]
+    partial class AddGifValidations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

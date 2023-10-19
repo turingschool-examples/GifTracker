@@ -1,5 +1,6 @@
 using GifTrackerAPI.DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using GifTrackerAPI.Models;
 
 namespace GifTrackerAPI.Controllers
 {
@@ -23,6 +24,22 @@ namespace GifTrackerAPI.Controllers
 
             // API endpoints should return JSON, we are creating a new JSON result with our list of gifs.
             return new JsonResult(gifs);
+        }
+
+        [HttpPost]
+        public void CreateGif(Gif gif)
+        {
+            if (!ModelState.IsValid)
+            {
+                Response.StatusCode = 400;
+                return;
+            }
+            _context.Gifs.Add(gif);
+            _context.SaveChanges();
+
+            Response.StatusCode = 201;
+
+            return;
         }
     }
 }
