@@ -98,6 +98,34 @@ namespace GifTrackerEndpointTests
             Assert.Equal("www.examplecaturl.com", context.Gifs.Find(1).Url);
         }
 
+        [Fact]
+        public async void DeleteGif_RemovesDatabaseRecord()
+        {
+            Gif gif1 = new Gif
+            {
+                Name = "Cat",
+                Url = "www.examplecat.com",
+                Rating = 1
+            };
+            Gif gif2 = new Gif
+            {
+                Name = "Dog",
+                Url = "www.exampledog.com",
+                Rating = 1
+            };
+            List<Gif> gifs = new() { gif1, gif2 };
+
+            GifTrackerApiContext context = GetDbContext();
+            HttpClient client = _factory.CreateClient();
+            context.Gifs.AddRange(gifs);
+            context.SaveChanges();
+
+            var response = await client.DeleteAsync("/gifs/2");
+
+            Assert.Equal(204, (int)response.StatusCode);
+            Assert.Equal(1, context.Gifs.Count());
+        }
+
         // This method helps us create an expected value. We can use the Newtonsoft JSON serializer to build the string that we expect.  Without this helper method, we would need to manually create the expected JSON string.
         private string ParseJson(object obj)
         {

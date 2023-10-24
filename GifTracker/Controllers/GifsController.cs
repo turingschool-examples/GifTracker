@@ -53,5 +53,17 @@ namespace GifTrackerAPI.Controllers
 
             return;
         }
+
+        [HttpDelete("{id}")]
+        public void DeleteBook(int id)
+        {
+            Gif gif = _context.Gifs.Find(id);
+            _context.Gifs.Remove(gif);
+            _context.SaveChanges();
+
+            Response.StatusCode = 204;
+
+            return;
+        }
     }
 }
