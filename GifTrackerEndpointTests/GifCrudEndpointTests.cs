@@ -8,6 +8,7 @@ using System.Text;
 
 namespace GifTrackerEndpointTests
 {
+    [Collection("Gifs Controller Tests")]
     public class GifCrudEndpointTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
@@ -67,6 +68,34 @@ namespace GifTrackerEndpointTests
             Assert.Equal("Created", response.StatusCode.ToString());
             Assert.Equal(201, (int)response.StatusCode);
             Assert.Equal("Goat Gif", newGif.Name);
+        }
+
+        [Fact]
+        public async void PutGif_UpdatesDatabaseRecord()
+        {
+            Gif catGif = new Gif
+            {
+                Name = "Cat",
+                Url = "www.examplecaturl.com",
+                Rating = 1
+            };
+
+            GifTrackerApiContext context = GetDbContext();
+            context.Gifs.Add(catGif);
+            context.SaveChanges();
+
+            HttpClient client = _factory.CreateClient();
+            var jsonString =
+                "{ \"Id\":\"1\", \"Name\":\"Cat New\", \"Url\":\"www.examplecaturl.com\", \"Rating\":1  }";
+            var requestContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("/gifs/1", requestContent);
+
+            // Clear all previously tracked DB objects to get a new copy of the updated book
+            context.ChangeTracker.Clear();
+
+            Assert.Equal(204, (int)response.StatusCode);
+            Assert.Equal("Cat New", context.Gifs.Find(1).Name);
+            Assert.Equal("www.examplecaturl.com", context.Gifs.Find(1).Url);
         }
 
         // This method helps us create an expected value. We can use the Newtonsoft JSON serializer to build the string that we expect.  Without this helper method, we would need to manually create the expected JSON string.

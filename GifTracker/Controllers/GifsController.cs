@@ -41,5 +41,17 @@ namespace GifTrackerAPI.Controllers
 
             return;
         }
+
+        //Make sure to pass in the id in the request body aswell.
+        [HttpPut("{id}")]
+        public void UpdateGif(int id, Gif gif)
+        {
+            _context.Gifs.Update(gif);
+            _context.SaveChanges();
+
+            Response.StatusCode = 204;
+
+            return;
+        }
     }
 }
